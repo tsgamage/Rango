@@ -8,7 +8,7 @@ import { pickRandomIndex } from "../../../utils/utils";
 import { FontSize } from "../../../constants/theme";
 
 interface Props {
-  onContinue: (range: number, attempts: number) => void;
+  onContinue: () => void;
   onGoingBack: () => void;
 }
 
@@ -39,17 +39,6 @@ function OptionSelectingScreen({ onGoingBack, onContinue }: Props) {
   };
 
   const dynamicReactionTexts = ["Let's Go", "Ready", "Let's Play"];
-
-  const handleContinue = () => {
-    const range =
-      numberRangeOption === "Easy"
-        ? 20
-        : numberRangeOption === "Medium"
-        ? 50
-        : 100;
-    const attempts = parseInt(chanceOption);
-    onContinue(range, attempts);
-  };
 
   return (
     <ScreenWrapper onGoingBack={onGoingBack}>
@@ -106,7 +95,7 @@ function OptionSelectingScreen({ onGoingBack, onContinue }: Props) {
         <View>
           <PrimaryButton
             label="Let's Go"
-            onPress={handleContinue}
+            onPress={onContinue}
             icon={{ icon: "arrow-forward" }}
           />
           <DynamicReaction>
