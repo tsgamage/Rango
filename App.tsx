@@ -30,7 +30,7 @@ export default function App() {
       case "game_mode_select":
         return <GameModeSelectScreen onGamemodChange={setAppState} />;
       case "game_1":
-        return <Game1Screen />;
+        return <Game1Screen onAppStateChange={setAppState} />;
       case "game_2":
         return <Game2Screen onAppStateChange={setAppState} />;
       case "game_3":

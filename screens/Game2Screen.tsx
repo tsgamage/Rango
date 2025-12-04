@@ -16,25 +16,12 @@ function Game2Screen({ onAppStateChange }: Props) {
     switch (gameState) {
       case "user_number_entering":
         return (
-          <UserNumberEnteringScreen
-            onContinue={() => setGameState("option_selecting")}
-            onGoingBack={() => onAppStateChange("game_mode_select")}
-          />
+          <UserNumberEnteringScreen onContinue={() => setGameState("option_selecting")} onGoingBack={() => onAppStateChange("game_mode_select")} />
         );
       case "option_selecting":
-        return (
-          <OptionSelectingScreen
-            onContinue={() => setGameState("playing")}
-            onGoingBack={() => setGameState("user_number_entering")}
-          />
-        );
+        return <OptionSelectingScreen onContinue={() => setGameState("playing")} onGoingBack={() => setGameState("user_number_entering")} />;
       case "playing":
-        return (
-          <PlayingScreen
-            onPause={() => setGameState("option_selecting")}
-            onPlay={() => setGameState("playing")}
-          />
-        );
+        return <PlayingScreen onPause={() => setGameState("option_selecting")} onPlay={() => setGameState("playing")} />;
       default:
         return null;
     }
