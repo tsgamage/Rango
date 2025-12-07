@@ -1,4 +1,4 @@
-import { Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import PrimaryButton from "../../ui/PrimaryButton";
 import { FontSize, Colors } from "../../../constants/theme";
@@ -9,13 +9,12 @@ import { generateRandomNumber, getRandomItem } from "../../../utils/utils";
 import { dynamicReactions } from "../../../data/dynamicReactions";
 import { useState } from "react";
 import DynamicReaction from "../../ui/DynamicReaction";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import ScreenWrapper from "../../ui/ScreenWrapper";
+import { useAppSelector } from "../../../store/hooks";
 
 type Props = NativeStackScreenProps<Game1StackParamList, "Play">;
 
 function PlayScreen({ navigation }: Props) {
-  const dispatch = useAppDispatch();
   const maxNumber = useAppSelector((state) => state.game1.maxNumber);
   const initialAttempts = useAppSelector((state) => state.game1.attempts);
 
@@ -24,7 +23,6 @@ function PlayScreen({ navigation }: Props) {
   const [userGuesses, setUserGuesses] = useState<number[]>([]);
   const [targetNumber, setTargetNumber] = useState(generateRandomNumber(1, maxNumber));
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(initialAttempts);
-  const [isGamePaused, setIsGamePaused] = useState(false);
 
   const [hint, setHint] = useState("Enter your guess");
 
@@ -82,10 +80,12 @@ function PlayScreen({ navigation }: Props) {
     setUsersGuess("");
 
     if (guessNumber === targetNumber) {
-      Alert.alert("Victory!", getRandomItem(dynamicReactions.userWon), [
-        { text: "Play Again", onPress: () => restartGame() },
-        { text: "Exit", onPress: () => navigation.goBack() },
-      ]);
+      navigation.replace("Win", {
+        title: "Victory!",
+        subtitle: getRandomItem(dynamicReactions.userWon),
+        nextRoute: "PlayStyleSelecting",
+        number: guessNumber,
+      });
     } else {
       if (remainingAttempts !== null) {
         setRemainingAttempts((prev) => prev! - 1);
@@ -107,11 +107,12 @@ function PlayScreen({ navigation }: Props) {
         setHint(`${guessNumber} is Low`);
       }
       if (remainingAttempts === 1) {
-        Alert.alert("Game Over!", getRandomItem(dynamicReactions.userLost), [
-          { text: "Play Again", onPress: () => restartGame() },
-          { text: "Change Settings", onPress: () => navigation.goBack() },
-          { text: "Exit", onPress: () => navigation.popToTop() },
-        ]);
+        navigation.replace("Loose", {
+          title: "Game Over!",
+          subtitle: getRandomItem(dynamicReactions.userLost),
+          nextRoute: "Play",
+          number: targetNumber,
+        });
       }
     }
   };

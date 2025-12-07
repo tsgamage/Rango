@@ -1,9 +1,9 @@
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Colors, FontSize } from "../../../constants/theme";
+import { Colors } from "../../../constants/theme";
 import PrimaryButton from "../../ui/PrimaryButton";
 import DynamicReaction from "../../ui/DynamicReaction";
 import { getRandomItem } from "../../../utils/utils";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ScreenHeader from "../../ui/ScreenHeader";
 import ScreenWrapper from "../../ui/ScreenWrapper";
 import { Game2StackParamList } from "../../../screens/Game2Screen";

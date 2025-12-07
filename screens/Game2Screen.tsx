@@ -2,11 +2,18 @@ import { UserNumberEnteringScreen } from "../components/screens/Game2/UserNumber
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PlayScreen from "../components/screens/Game2/PlayScreen";
 import { Colors } from "../constants/theme";
+import WinScreen from "./WinScreen";
 
 export type Game2StackParamList = {
   UserNumberEntering: undefined;
   OptionSelecting: undefined;
   Play: undefined;
+  Win: {
+    title: string;
+    subtitle: string;
+    nextRoute: string;
+    number?: number;
+  };
 };
 
 function Game2Screen() {
@@ -18,6 +25,7 @@ function Game2Screen() {
     >
       <Game2Stack.Screen name="UserNumberEntering" component={UserNumberEnteringScreen} />
       <Game2Stack.Screen name="Play" component={PlayScreen} options={{ headerShown: false }} />
+      <Game2Stack.Screen name="Win" component={WinScreen} options={{ headerShown: false }} />
     </Game2Stack.Navigator>
   );
 }

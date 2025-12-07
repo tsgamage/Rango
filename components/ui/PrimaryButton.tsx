@@ -1,7 +1,6 @@
 import { Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, FontSize } from "../../constants/theme";
-import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
 export interface IPrimaryButton {

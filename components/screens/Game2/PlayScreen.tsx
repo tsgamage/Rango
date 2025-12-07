@@ -1,20 +1,26 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
-import PrimaryButton from "../../ui/PrimaryButton";
-import DynamicReaction from "../../ui/DynamicReaction";
+import { StyleSheet, Text, View } from "react-native";
 import { Colors, FontSize } from "../../../constants/theme";
-import { generateRandomNumber, generateRandomNumberExcluding, getRandomItem } from "../../../utils/utils";
+import { generateRandomNumberExcluding, getRandomItem } from "../../../utils/utils";
 import { useEffect, useState } from "react";
 import { dynamicReactions } from "../../../data/dynamicReactions";
 import { Game2StackParamList } from "../../../screens/Game2Screen";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import ScreenWrapper from "../../ui/ScreenWrapper";
 import { useAppSelector } from "../../../store/hooks";
 
+import ScreenWrapper from "../../ui/ScreenWrapper";
+import DynamicReaction from "../../ui/DynamicReaction";
+import AlertModal from "../../ui/AlertModal";
+import PrimaryButton from "../../ui/PrimaryButton";
+
 type Props = NativeStackScreenProps<Game2StackParamList, "Play">;
+
+const emojiSet = ["😮‍💨", "😤", "😵‍💫", "😦"];
 
 function PlayScreen({ navigation }: Props) {
   const userNumber = useAppSelector((state) => state.game2.userNumber);
   const [reaction, setReaction] = useState("");
+  const [isLyingModalVisible, setIsLyingModalVisible] = useState(false);
+  const [pickedEmoji, setPickedEmoji] = useState("");
 
   const [maxNumber, setMaxNumber] = useState(99);
   const [minNumber, setMinNumber] = useState(1);
@@ -23,7 +29,8 @@ function PlayScreen({ navigation }: Props) {
 
   const handleLying = () => {
     setReaction(getRandomItem(dynamicReactions.lying));
-    Alert.alert("Don't Lie to me...", getRandomItem(dynamicReactions.lying), [{ text: "Sorry", onPress: () => {} }]);
+    setIsLyingModalVisible(true);
+    setPickedEmoji(getRandomItem(emojiSet));
   };
 
   const handleHigher = () => {
@@ -48,13 +55,26 @@ function PlayScreen({ navigation }: Props) {
 
   useEffect(() => {
     if (generatedNumber === userNumber) {
-      Alert.alert("Yes, i won!", "Rango guessed your number", [{ text: "Play Again", onPress: () => navigation.replace("UserNumberEntering") }]);
+      navigation.replace("Win", {
+        title: "Yes, i won!",
+        subtitle: getRandomItem(dynamicReactions.rangoWon),
+        nextRoute: "UserNumberEntering",
+        number: userNumber,
+      });
     }
   }, [generatedNumber]);
 
   return (
     <ScreenWrapper>
       <View style={styles.container}>
+        <AlertModal
+          visible={isLyingModalVisible}
+          title="Don't Lie to me..."
+          emoji={pickedEmoji}
+          message={reaction || "I know the truth..."}
+          onClose={() => setIsLyingModalVisible(false)}
+          buttonText="Sorry"
+        />
         {/* Dynamic Reaction at Top */}
 
         {/* Circular Glass Card for the Guess */}

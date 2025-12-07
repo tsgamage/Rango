@@ -1,7 +1,6 @@
-import { View, StyleSheet, StyleProp, ViewStyle, Pressable } from "react-native";
-import { Colors, FontSize } from "../../constants/theme";
+import { StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { Colors } from "../../constants/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 
 interface Props {
   children: React.ReactNode;

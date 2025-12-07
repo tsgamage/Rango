@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 import ScreenHeader from "../../ui/ScreenHeader";
 import ScreenWrapper from "../../ui/ScreenWrapper";
 import PrimaryButton from "../../ui/PrimaryButton";
@@ -10,6 +10,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Game1StackParamList } from "../../../screens/Game1Screen";
 import { useAppDispatch } from "../../../store/hooks";
 import { game1Actions, Game1Attempts, Game1MaxNumber } from "../../../store/slice/game1.slice";
+import { dynamicReactions } from "../../../data/dynamicReactions";
 
 type Props = NativeStackScreenProps<Game1StackParamList, "OptionSelecting">;
 
@@ -28,6 +29,7 @@ function OptionSelectingScreen({ navigation }: Props) {
 
   const [numberRangeOption, setNumberRangeOption] = useState<NumberRangeLabel>("Easy");
   const [attemptsOption, setAttemptsOption] = useState<AttempsOptions>("15");
+  const [dynamicReaction, setDynamicReaction] = useState<string>("");
 
   const handleNumberRangeOptionChange = (option: NumberRangeLabel) => {
     setNumberRangeOption(option);
@@ -42,7 +44,17 @@ function OptionSelectingScreen({ navigation }: Props) {
     navigation.navigate("Play");
   };
 
-  const dynamicReactionTexts = ["Let's Go", "Ready", "Let's Play"];
+  useEffect(() => {
+    if (numberRangeOption === "Easy") {
+      setDynamicReaction(getRandomItem(dynamicReactions.easyMode));
+    }
+    if (numberRangeOption === "Medium") {
+      setDynamicReaction(getRandomItem(dynamicReactions.normalMode));
+    }
+    if (numberRangeOption === "Hard") {
+      setDynamicReaction(getRandomItem(dynamicReactions.hardMode));
+    }
+  }, [numberRangeOption]);
 
   return (
     <ScreenWrapper>
@@ -90,7 +102,7 @@ function OptionSelectingScreen({ navigation }: Props) {
         </View>
         <View>
           <PrimaryButton label="Let's Go" onPress={handleStartGame} icon={{ icon: "arrow-forward" }} />
-          <DynamicReaction>{getRandomItem(dynamicReactionTexts)}</DynamicReaction>
+          <DynamicReaction>{dynamicReaction}</DynamicReaction>
         </View>
       </View>
     </ScreenWrapper>
