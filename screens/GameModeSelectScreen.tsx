@@ -8,8 +8,14 @@ import DynamicReaction from "../components/ui/DynamicReaction";
 import ScreenHeader from "../components/ui/ScreenHeader";
 import { useMemo, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { LinearGradient } from "expo-linear-gradient";
 
-const descriptionTexts = ["Select how you want to challenge your brain", "Pick a style. Let's rumble!", "Choose your vibe for this round."];
+const descriptionTexts = [
+  "Select how you want to challenge your brain",
+  "Pick a style. Let's rumble!",
+  "Choose your vibe for this round.",
+  "Ready to test your intuition?",
+];
 
 type Props = NativeStackScreenProps<RootStackParamList, "GameModeSelect">;
 
@@ -46,6 +52,7 @@ function GameModeSelectScreen({ navigation }: Props) {
       onLongPress() {
         navigation.navigate("Game1");
       },
+      description: gameDescriptions[0].description,
     },
     {
       label: "Rango Will Guess",
@@ -55,6 +62,7 @@ function GameModeSelectScreen({ navigation }: Props) {
       onLongPress() {
         navigation.navigate("Game2");
       },
+      description: gameDescriptions[1].description,
     },
     {
       label: "Guessing Battle",
@@ -64,66 +72,84 @@ function GameModeSelectScreen({ navigation }: Props) {
       onLongPress() {
         navigation.navigate("Game3");
       },
+      description: gameDescriptions[2].description,
     },
   ];
+
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "space-between",
-        padding: 20,
-      }}
-    >
-      <View style={styles.headerContainer}>
-        <ScreenHeader>Choose Your Game Mode</ScreenHeader>
-        {gameDescription && <Text style={styles.modSelectHintText}>Press & Hold to select</Text>}
-      </View>
-      <View style={{ gap: 10 }}>
-        {gamemods.map((gamemod, index) => (
-          <PrimaryButton
-            key={gamemod.label}
-            {...gamemod}
-            onPress={gamemod.onPress}
-            onLongPress={gamemod.onLongPress}
-            description={index + 1 === gameDescription?.game ? gameDescription?.description : ""}
-            descriptionStyle={{
-              fontSize: FontSize.extraSmall,
-              textAlign: "center",
-            }}
-            icon={{
-              visible: gameDescription?.game !== index + 1,
-              icon: "arrow-forward",
-            }}
-            iconStyle={{
-              position: "absolute",
-              right: 0,
-            }}
-          />
-        ))}
-      </View>
-      <DynamicReaction>{dynamicReactionText}</DynamicReaction>
-    </SafeAreaView>
+    <LinearGradient colors={Colors.gradients.primary as any} style={styles.container}>
+      <SafeAreaView style={styles.contentContainer}>
+        <View style={styles.headerContainer}>
+          <ScreenHeader>Choose Your Game Mode</ScreenHeader>
+          <View style={styles.hintContainer}>
+            <Text style={styles.modSelectHintText}>Press & Hold to select</Text>
+          </View>
+        </View>
+
+        <View style={styles.buttonsContainer}>
+          {gamemods.map((gamemod, index) => (
+            <PrimaryButton
+              key={gamemod.label}
+              {...gamemod}
+              onPress={gamemod.onPress}
+              onLongPress={gamemod.onLongPress}
+              // Only show description if selected
+              description={index + 1 === gameDescription?.game ? gameDescription?.description : undefined}
+              isSelected={index + 1 === gameDescription?.game}
+              icon={{
+                visible: true,
+                icon: "arrow-forward",
+                position: "right",
+              }}
+            />
+          ))}
+        </View>
+
+        <View style={styles.footerContainer}>
+          <DynamicReaction>{dynamicReactionText}</DynamicReaction>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    padding: 20,
   },
   headerContainer: {
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 20,
+  },
+  hintContainer: {
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 20,
+    backgroundColor: Colors.glass,
+    borderWidth: 1,
+    borderColor: Colors.glassBorder,
   },
   modSelectHintText: {
     fontSize: FontSize.small,
     textAlign: "center",
-    borderWidth: 1,
-    borderRadius: 10,
+    color: Colors.textSecondary,
+    fontWeight: "600",
+  },
+  buttonsContainer: {
+    gap: 16,
+    width: "100%",
     paddingHorizontal: 10,
-    borderColor: "#00000050",
+  },
+  footerContainer: {
+    marginBottom: 20,
+    alignItems: "center",
   },
 });
 

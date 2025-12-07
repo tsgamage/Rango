@@ -1,15 +1,8 @@
-import {
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { FontSize } from "../../../constants/theme";
+import { Colors, FontSize } from "../../../constants/theme";
 import { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 export interface IPrimaryButton {
   label: string;
@@ -33,6 +26,10 @@ export interface IPrimaryButton {
    ** This is the `View` component that wraps the overall button
    */
   buttonContainerStyle?: StyleProp<ViewStyle>;
+  /**
+   * This will add style to the button text
+   */
+  buttonTextStyle?: StyleProp<TextStyle>;
   /**
    ** This will add style to the description text
    ** This is the `Text` component
@@ -69,6 +66,7 @@ const PrimaryButton: React.FC<IPrimaryButton> = ({
   containerStyle,
   buttonStyle,
   buttonContainerStyle,
+  buttonTextStyle,
   descriptionStyle,
   descriptionContainerStyle,
   iconStyle,
@@ -80,13 +78,12 @@ const PrimaryButton: React.FC<IPrimaryButton> = ({
 }) => {
   const iconVisible = icon?.visible || icon?.visible === undefined;
   const iconPositionLeft = icon?.position === "left";
-  const iconPositionRight =
-    icon?.position === "right" || icon?.position === undefined;
+  const iconPositionRight = icon?.position === "right" || icon?.position === undefined;
 
   return (
     <View style={[styles.pressableContainer, containerStyle]}>
       <Pressable
-        android_ripple={{ color: "#00000028", foreground: true }}
+        android_ripple={{ color: Colors.primaryDark, foreground: true }}
         onPress={() => {
           onPress ? onPress() : null;
           onSelect ? onSelect() : null;
@@ -94,7 +91,10 @@ const PrimaryButton: React.FC<IPrimaryButton> = ({
         onLongPress={() => (onLongPress ? onLongPress() : null)}
         disabled={disabled}
       >
-        <View
+        <LinearGradient
+          colors={Colors.gradients.button as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
           style={[
             styles.buttonContainer,
             isSelected && styles.buttonContainerSelected,
@@ -107,33 +107,26 @@ const PrimaryButton: React.FC<IPrimaryButton> = ({
               <Ionicons
                 name={icon.icon}
                 size={24}
-                color="black"
+                color={Colors.text} // Use theme text for contrast
                 style={iconStyle}
               />
             )}
-            <Text style={styles.buttonText}>{label}</Text>
+            <Text style={[styles.buttonText, buttonTextStyle]}>{label}</Text>
             {icon && iconVisible && iconPositionRight && (
               <Ionicons
                 name={icon.icon}
                 size={24}
-                color="black"
-                style={iconStyle}
+                color={Colors.text} // Use theme text for contrast
+                style={[iconStyle, styles.rightIcon]}
               />
             )}
           </View>
           {description && (
-            <View
-              style={[
-                styles.buttonDescriptionContainer,
-                descriptionContainerStyle,
-              ]}
-            >
-              <Text style={[styles.buttonDescription, descriptionStyle]}>
-                {description}
-              </Text>
+            <View style={[styles.buttonDescriptionContainer, descriptionContainerStyle]}>
+              <Text style={[styles.buttonDescription, descriptionStyle]}>{description}</Text>
             </View>
           )}
-        </View>
+        </LinearGradient>
       </Pressable>
     </View>
   );
@@ -144,31 +137,56 @@ export default PrimaryButton;
 const styles = StyleSheet.create({
   pressableContainer: {
     overflow: "hidden",
-    borderRadius: 100,
+    borderRadius: 100, // Fully rounded (Pill shape)
+    elevation: 6,
+    shadowColor: Colors.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    backgroundColor: Colors.primary, // Fallback
+    marginVertical: 12,
   },
   buttonContainer: {
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingHorizontal: 32,
+    paddingVertical: 24, // "Google Style" Big Padding
     borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1, // Nice border
+    borderColor: Colors.border, // Subtle premium border
+  },
+  pressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
   },
   buttonContainerSelected: {
-    borderWidth: 3,
+    borderWidth: 2,
+    borderColor: Colors.primaryLight,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
+    justifyContent: "center", // Keep text centered
+    width: "100%", // Take full width to allow absolute icon positioning
   },
   buttonText: {
-    fontSize: FontSize.large,
+    fontSize: FontSize.medium,
+    fontWeight: "bold",
+    color: Colors.text,
+    letterSpacing: 0.5,
+    textAlign: "center", // Explicit center
+  },
+  rightIcon: {
+    position: "absolute",
+    right: 0,
   },
   buttonDescription: {
     fontSize: FontSize.small,
+    color: Colors.textSecondary,
+    marginTop: 2,
   },
   buttonDescriptionContainer: {},
   disabledButtonContainer: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
 });
